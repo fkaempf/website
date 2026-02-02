@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<!-- v7 - teal links, moss headers -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Florian Kämpf | Neuroscience Research</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Serif:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Profile Card - Fixed Left -->
+        <aside class="profile-card">
+            <div class="profile-image-wrapper">
+                <img src="portrait.jpg" alt="Florian Kämpf" class="profile-image">
+            </div>
+            <h1 class="name">Florian Kämpf</h1>
+            <div class="social-links">
+                <a href="https://scholar.google.com/citations?user=ue53aMkAAAAJ&hl=en" class="social-link" aria-label="Google Scholar" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/>
+                    </svg>
+                </a>
+                <a href="https://bsky.app/profile/flofightscience.bsky.social" class="social-link" aria-label="Bluesky" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.206-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z"/>
+                    </svg>
+                </a>
+                <a href="mailto:florianfelixkampf@gmail.com" class="social-link" aria-label="Email">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                </a>
+                <a href="https://orcid.org/0009-0001-7036-4729" class="social-link" aria-label="ORCID" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z"/>
+                    </svg>
+                </a>
+            </div>
+            
+            <nav class="nav">
+                <button class="nav-item" data-section="research">Research</button>
+                <button class="nav-item" data-section="publications">Publications</button>
+                <button class="nav-item" data-section="talks">Talks</button>
+                <button class="nav-item" data-section="cv">CV</button>
+            </nav>
+        </aside>
+
+        <!-- Content Drawer - Slides out from right -->
+        <main class="content-drawer" id="contentDrawer">
+            <button class="drawer-close" id="drawerClose" aria-label="Close">×</button>
+            
+            <!-- Research Section -->
+            <section class="drawer-section" id="research">
+                <h2>Research</h2>
+                <p class="research-intro">I study how sensory inputs are transformed into persistent internal states that drive context-appropriate behaviour.</p>
+
+                <div class="research-block">
+                    <h3>Current: Internal States in Drosophila</h3>
+                    <p>My PhD investigates how contact chemosensation induces internal states in male <em>Drosophila melanogaster</em>. When a male fly touches another fly, pheromone cues trigger either courtship (female) or aggression (male), yet both behaviours share underlying neural circuitry through P1 neurons. I'm dissecting how the brain distinguishes these contexts and selects appropriate behavioural outputs. I combine connectomics (using the <a href="https://male-cns.janelia.org/" target="_blank" rel="noopener">male CNS connectome</a>), behavioural assays with optogenetic manipulation, and two-photon calcium imaging to map the circuit from sensory input to motor output.</p>
+                </div>
+
+                <div class="research-block">
+                    <h3>Previous: Neural basis of evidence integration in larval zebrafish</h3>
+                    <p>During my MSc, I studied the motion evidence integrator circuit in larval zebrafish: a neural system that accumulates noisy visual information to drive swim decisions. Using functionally-guided photoactivation combined with RNA in situ hybridization, I mapped the morphology and neurotransmitter identity of circuit components, establishing a structure-to-function relationship validated against electron microscopy reconstructions. This work culminated in a <a href="https://doi.org/10.1101/2025.03.14.643363" target="_blank" rel="noopener">co-first author paper</a> combining CLEM with functional imaging to reveal the circuit architecture underlying evidence accumulation.</p>
+                </div>
+
+                <div class="research-block">
+                    <h3>Approach</h3>
+                    <p>My scientific path started with a childhood fascination for fish and programming, two interests that seemed unrelated until I found myself studying how neural circuits compute behaviour. From cichlid social dynamics at Lake Tanganyika to motion integration in zebrafish to internal states in flies, I've been drawn to understanding how brains implement computations that transform sensory inputs into adaptive actions. I combine connectomics with functional imaging and behavioural experiments, always looking for the link between circuit structure and the computations it performs.</p>
+                </div>
+            </section>
+
+            <!-- Publications Section -->
+            <section class="drawer-section" id="publications">
+                <h2>Publications</h2>
+                <div id="publications-list">
+                    <p class="loading-text">Loading publications...</p>
+                </div>
+            </section>
+
+            <!-- Talks Section -->
+            <section class="drawer-section" id="talks">
+                <h2>Talks & Posters</h2>
+
+                <article class="talk">
+                    <span class="talk-type">Talk</span>
+                    <h3 class="talk-title">Contact Chemosensation and Neural Control of Internal States in Drosophila melanogaster</h3>
+                    <p class="talk-venue">Cambrain</p>
+                    <p class="talk-date">October 2025, Cambridge, UK</p>
+                </article>
+
+                <article class="talk">
+                    <span class="talk-type">Poster</span>
+                    <h3 class="talk-title">Dissection of a neuronal integrator circuit through functionally guided photoactivations and neurotransmitter identifications</h3>
+                    <p class="talk-venue">FENS Forum 2024</p>
+                    <p class="talk-date">June 2024, Vienna, Austria</p>
+                </article>
+
+                <article class="talk">
+                    <span class="talk-type">Poster</span>
+                    <h3 class="talk-title">Dissection of a neuronal integrator circuit through functionally guided photoactivations and neurotransmitter identifications</h3>
+                    <p class="talk-venue">Zebrafish Neurobiology Meeting, Cold Spring Harbor Laboratory</p>
+                    <p class="talk-date">November 2023, NY, USA</p>
+                </article>
+
+                <article class="talk">
+                    <span class="talk-type">Poster</span>
+                    <h3 class="talk-title">Dissection of a neuronal integrator circuit through correlated light and electron microscopy in the larval zebrafish</h3>
+                    <p class="talk-venue">Society for Neuroscience Meeting</p>
+                    <p class="talk-date">November 2023, Chicago, USA</p>
+                </article>
+
+                <article class="talk">
+                    <span class="talk-type">Talk</span>
+                    <h3 class="talk-title">Connecting cell functionality to cell morphology through light microscopy</h3>
+                    <p class="talk-venue">NeuroTuscany: Circuits and Behaviour</p>
+                    <p class="talk-date">June 2023, Montecastelli, Italy</p>
+                </article>
+            </section>
+
+            <!-- CV Section -->
+            <section class="drawer-section" id="cv">
+                <h2>CV</h2>
+
+                <div class="cv-section">
+                    <h3>Fellowships & Funding</h3>
+                    <div class="cv-item">
+                        <span class="cv-date">2025–2028</span>
+                        <div class="cv-content">
+                            <strong><a href="https://bifonds.de/fellowships-grants/phd-fellowships.html" target="_blank" rel="noopener">Boehringer Ingelheim Fonds PhD Fellowship</a></strong>
+                            <p class="cv-detail">Competitive fellowship for outstanding junior scientists in basic biomedical research (<10% acceptance)</p>
+                        </div>
+                    </div>
+                    <div class="cv-item">
+                        <span class="cv-date">2024–2028</span>
+                        <div class="cv-content">
+                            <strong><a href="http://mrclmb.ac.uk/careers-and-people/phd-students/funding/" target="_blank" rel="noopener">MRC Studentship</a></strong>
+                            <p class="cv-detail">Fully-funded PhD studentship at the MRC Laboratory of Molecular Biology</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cv-section">
+                    <h3>Research Experience</h3>
+                    <div class="cv-item">
+                        <span class="cv-date">2024–present</span>
+                        <div class="cv-content">
+                            <strong>PhD Researcher, <a href="https://flybrain.mrc-lmb.cam.ac.uk/jefferislabwebsite/" target="_blank" rel="noopener">Jefferis Lab</a></strong>
+                            <p>MRC-LMB, Cambridge</p>
+                            <p class="cv-detail">Connectome analysis, 2-photon microscopy, VR behaviour setups</p>
+                        </div>
+                    </div>
+                    <div class="cv-item">
+                        <span class="cv-date">2021–2024</span>
+                        <div class="cv-content">
+                            <strong>Research Assistant, <a href="https://www.neurobiology-konstanz.com/bahl" target="_blank" rel="noopener">Bahl Lab</a></strong>
+                            <p>University of Konstanz</p>
+                            <p class="cv-detail">Functional imaging, CLEM, zebrafish neural circuits</p>
+                        </div>
+                    </div>
+                    <div class="cv-item">
+                        <span class="cv-date">2021</span>
+                        <div class="cv-content">
+                            <strong>Field Assistant, Jordan Lab</strong>
+                            <p>Lake Tanganyika, Zambia</p>
+                            <p class="cv-detail">Scientific diving, cichlid behaviour research</p>
+                        </div>
+                    </div>
+                    <div class="cv-item">
+                        <span class="cv-date">2018–2019</span>
+                        <div class="cv-content">
+                            <strong>Research Assistant, Jordan Lab</strong>
+                            <p>University of Konstanz</p>
+                            <p class="cv-detail">Social behaviour in cichlids, experimental design</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cv-section">
+                    <h3>Education</h3>
+                    <div class="cv-item">
+                        <span class="cv-date">2024–present</span>
+                        <div class="cv-content">
+                            <strong>PhD, Biological Sciences</strong>
+                            <p>MRC Laboratory of Molecular Biology, University of Cambridge</p>
+                            <p class="cv-detail"><a href="https://flybrain.mrc-lmb.cam.ac.uk/jefferislabwebsite/" target="_blank" rel="noopener">Jefferis Lab</a>. Contact chemosensation and neural control of internal states in <em>Drosophila</em></p>
+                        </div>
+                    </div>
+                    <div class="cv-item">
+                        <span class="cv-date">2021–2024</span>
+                        <div class="cv-content">
+                            <strong>MSc, Biological Sciences</strong>
+                            <p>University of Konstanz, Germany</p>
+                            <p class="cv-detail"><a href="https://www.neurobiology-konstanz.com/bahl" target="_blank" rel="noopener">Bahl Lab</a>. Mapping functional dynamics and neuronal structure in a hindbrain neural integrator circuit</p>
+                        </div>
+                    </div>
+                    <div class="cv-item">
+                        <span class="cv-date">2017–2021</span>
+                        <div class="cv-content">
+                            <strong>BSc, Biological Sciences</strong>
+                            <p>University of Konstanz, Germany</p>
+                            <p class="cv-detail">Jordan Lab. Evaluating the effect of simulated predation on contest behaviour in cichlids</p>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="academic_cv_fk20260130.pdf" class="cv-download" download>Download Full CV (PDF)</a>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
