@@ -480,6 +480,8 @@ body::before {
     font-size: 0.9rem;
     color: var(--text-secondary);
     margin-bottom: 4px;
+    line-height: 1.5;
+    word-wrap: break-word;
 }
 
 .pub-authors strong {

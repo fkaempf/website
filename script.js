@@ -340,8 +340,10 @@ async function fetchPublications() {
             return;
         }
 
-        const publications = works.map(work => {
+        // Fetch full details for each work to get authors
+        const publications = await Promise.all(works.map(async work => {
             const summary = work['work-summary'][0];
+            const putCode = summary['put-code'];
             const title = summary.title?.title?.value || 'Untitled';
             const year = summary['publication-date']?.year?.value || '';
             const journal = summary['journal-title']?.value || 'Preprint';
@@ -351,15 +353,75 @@ async function fetchPublications() {
             const externalIds = summary['external-ids']?.['external-id'] || [];
             const doi = externalIds.find(id => id['external-id-type'] === 'doi')?.['external-id-value'];
 
-            return { title, year, journal, type, doi };
-        });
+            // Fetch authors from ORCID
+            let orcidAuthors = [];
+            try {
+                const workResponse = await fetch(`https://pub.orcid.org/v3.0/${ORCID_ID}/work/${putCode}`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (workResponse.ok) {
+                    const workData = await workResponse.json();
+                    const contributors = workData.contributors?.contributor || [];
+                    orcidAuthors = contributors
+                        .map(c => c['credit-name']?.value || '')
+                        .filter(name => name);
+                }
+            } catch (e) {
+                console.warn('Could not fetch authors from ORCID for:', title);
+            }
+
+            // Also fetch from CrossRef (usually has complete author lists)
+            let crossrefAuthors = [];
+            if (doi) {
+                try {
+                    const crossrefResponse = await fetch(
+                        `https://api.crossref.org/works?filter=doi:${encodeURIComponent(doi)}&mailto=florianfelixkampf@gmail.com`
+                    );
+                    if (crossrefResponse.ok) {
+                        const crossrefData = await crossrefResponse.json();
+                        const items = crossrefData.message?.items || [];
+                        if (items.length > 0) {
+                            const authorList = items[0].author || [];
+                            crossrefAuthors = authorList
+                                .map(a => `${a.given || ''} ${a.family || ''}`.trim())
+                                .filter(name => name);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Could not fetch authors from CrossRef for:', title, e);
+                }
+            }
+
+            // Use whichever source has more authors
+            const authors = crossrefAuthors.length >= orcidAuthors.length
+                ? crossrefAuthors.join(', ')
+                : orcidAuthors.join(', ');
+
+            return { title, year, journal, type, doi, authors };
+        }));
 
         // Sort by year descending
         publications.sort((a, b) => (b.year || 0) - (a.year || 0));
 
-        container.innerHTML = publications.map(pub => `
+        container.innerHTML = publications.map(pub => {
+            // Shorten first names to initials and bold my name
+            let authorsHtml = '';
+            if (pub.authors) {
+                const authorList = pub.authors.split(', ').map(name => {
+                    const parts = name.trim().split(/\s+/);
+                    if (parts.length < 2) return name;
+                    const lastName = parts[parts.length - 1];
+                    const initials = parts.slice(0, -1).map(p => p[0] + '.').join(' ');
+                    return `${initials} ${lastName}`;
+                });
+                authorsHtml = authorList.join(', ')
+                    .replace(/(F\.\s*(?:F\.\s*)?Kämpf|F\.\s*(?:F\.\s*)?Kampf)/gi, '<strong>$1</strong>');
+            }
+
+            return `
             <article class="publication">
                 <h3 class="pub-title">${pub.title}</h3>
+                ${authorsHtml ? `<p class="pub-authors">${authorsHtml}</p>` : ''}
                 <p class="pub-journal">${pub.journal}${pub.year ? `, ${pub.year}` : ''}</p>
                 ${pub.doi ? `
                 <div class="pub-links">
@@ -367,7 +429,7 @@ async function fetchPublications() {
                 </div>
                 ` : ''}
             </article>
-        `).join('');
+        `}).join('');
 
     } catch (error) {
         console.error('Error fetching publications:', error);
