@@ -209,6 +209,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentSection = null;
 
+    // Mobile: tap profile image to toggle brain
+    const profileWrapper = document.querySelector('.profile-image-wrapper');
+    if (profileWrapper) {
+        profileWrapper.addEventListener('click', () => {
+            // Only on mobile (match CSS breakpoint)
+            if (window.innerWidth <= 900) {
+                profileWrapper.classList.toggle('show-brain');
+
+                // Initialize brain animation if showing for first time
+                const brainSvg = profileWrapper.querySelector('.profile-brain svg');
+                if (brainSvg && !brainSvg.dataset.initialized) {
+                    const network = neuralNetwork.init(brainSvg);
+                    if (network) {
+                        network.animate();
+                        brainSvg.dataset.initialized = 'true';
+                    }
+                }
+            }
+        });
+    }
+
     /**
      * Open the drawer and show the specified section
      */
