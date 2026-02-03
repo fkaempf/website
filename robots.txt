@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://floriankaempf.com/sitemap.xml
