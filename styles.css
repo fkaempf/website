@@ -90,6 +90,48 @@ body::before {
 
 
 /* ========================================
+   Brain Logo
+   ======================================== */
+
+.brain-logo {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    width: 200px;
+    height: 200px;
+    z-index: 10;
+    opacity: 0.6;
+    transition: opacity var(--transition-smooth);
+}
+
+.brain-logo:hover {
+    opacity: 0.9;
+}
+
+.brain-logo svg {
+    width: 100%;
+    height: 100%;
+}
+
+.brain-logo.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Hide brain logo on mobile */
+@media (max-width: 900px) {
+    .brain-logo {
+        display: none;
+    }
+}
+
+/* Brain logo animation - controlled by JavaScript for adjacent spreading */
+/* Timing controlled in JavaScript: 0.25s rise, 1s decay */
+#somas g, [id^="somas"] g {
+    opacity: 0;
+}
+
+/* ========================================
    Layout Container
    ======================================== */
 
@@ -439,10 +481,22 @@ body::before {
     color: var(--bg-primary);
 }
 
+.loading-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
 .loading-text {
     color: var(--text-muted);
     font-style: italic;
 }
+
+.loading-brain {
+    width: 32px;
+    height: 32px;
+}
+
 
 /* ========================================
    Talks Section

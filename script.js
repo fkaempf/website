@@ -4,12 +4,208 @@
 
 const ORCID_ID = '0009-0001-7036-4729';
 
+/**
+ * Neural network animation - somas light up adjacently
+ * Connection matrix computed from SVG striche (paths) geometry
+ */
+const neuralNetwork = {
+    matrix: null, // Will be computed from SVG
+
+    // Compute soma positions from their transform matrices
+    getSomaPositions: function(somasGroup) {
+        const somas = somasGroup.querySelectorAll('g');
+        const positions = [];
+        // Ellipse center in local coords
+        const cx = 460.739, cy = 334.883;
+
+        somas.forEach(g => {
+            const transform = g.getAttribute('transform');
+            if (transform) {
+                const match = transform.match(/matrix\(([^)]+)\)/);
+                if (match) {
+                    const vals = match[1].split(',').map(Number);
+                    // matrix(a,b,c,d,e,f) -> x = a*cx + e, y = d*cy + f
+                    positions.push({
+                        x: vals[0] * cx + vals[4],
+                        y: vals[3] * cy + vals[5]
+                    });
+                }
+            }
+        });
+        return positions;
+    },
+
+    // Parse path endpoints from striche
+    getPathEndpoints: function(stricheGroup) {
+        const paths = stricheGroup.querySelectorAll('path');
+        const endpoints = [];
+
+        paths.forEach(path => {
+            const d = path.getAttribute('d');
+            if (d) {
+                // Parse "M x1,y1 L x2,y2" format
+                const match = d.match(/M([\d.]+),([\d.]+)L([\d.]+),([\d.]+)/);
+                if (match) {
+                    endpoints.push({
+                        p1: { x: parseFloat(match[1]), y: parseFloat(match[2]) },
+                        p2: { x: parseFloat(match[3]), y: parseFloat(match[4]) }
+                    });
+                }
+            }
+        });
+        return endpoints;
+    },
+
+    // Find nearest soma to a point
+    findNearestSoma: function(point, somaPositions) {
+        let minDist = Infinity;
+        let nearest = -1;
+
+        for (let i = 0; i < somaPositions.length; i++) {
+            const dx = point.x - somaPositions[i].x;
+            const dy = point.y - somaPositions[i].y;
+            const dist = dx * dx + dy * dy; // squared distance is fine for comparison
+            if (dist < minDist) {
+                minDist = dist;
+                nearest = i;
+            }
+        }
+        return nearest;
+    },
+
+    // Build connection matrix from SVG geometry
+    buildMatrix: function(svgContainer) {
+        const somasGroup = svgContainer.querySelector('#somas, #somas-loader, [id^="somas"]');
+        const stricheGroup = svgContainer.querySelector('#striche, #striche-loader, [id^="striche"]');
+
+        if (!somasGroup || !stricheGroup) return null;
+
+        const somaPositions = this.getSomaPositions(somasGroup);
+        const pathEndpoints = this.getPathEndpoints(stricheGroup);
+        const n = somaPositions.length;
+
+        // Initialize empty matrix
+        const matrix = Array(n).fill(null).map(() => Array(n).fill(0));
+
+        // For each path, connect the two nearest somas
+        pathEndpoints.forEach(ep => {
+            const soma1 = this.findNearestSoma(ep.p1, somaPositions);
+            const soma2 = this.findNearestSoma(ep.p2, somaPositions);
+
+            if (soma1 !== -1 && soma2 !== -1 && soma1 !== soma2) {
+                matrix[soma1][soma2] = 1;
+                matrix[soma2][soma1] = 1;
+            }
+        });
+
+        return matrix;
+    },
+
+    // Get neighbors of a node from the connection matrix
+    getNeighbors: function(nodeIndex) {
+        if (!this.matrix || !this.matrix[nodeIndex]) return [];
+        const neighbors = [];
+        for (let i = 0; i < this.matrix[nodeIndex].length; i++) {
+            if (this.matrix[nodeIndex][i] === 1) neighbors.push(i);
+        }
+        return neighbors;
+    },
+
+    init: function(svgContainer) {
+        const somasGroup = svgContainer.querySelector('#somas, #somas-loader, [id^="somas"]');
+        if (!somasGroup) return null;
+
+        const somas = somasGroup.querySelectorAll('g');
+        if (somas.length === 0) return null;
+
+        // Build connection matrix from this SVG's geometry
+        this.matrix = this.buildMatrix(svgContainer);
+
+        // Animation timing constants
+        const RISE_TIME = 0.25;  // seconds
+        const DECAY_TIME = 1.0;  // seconds
+
+        // Set all somas to invisible initially
+        somas.forEach(soma => {
+            soma.style.opacity = '0';
+            soma.style.transition = `opacity ${DECAY_TIME}s ease-out`;
+        });
+
+        return {
+            somas: somas,
+            currentActive: null,
+            previousActive: null,
+            riseTime: RISE_TIME,
+            decayTime: DECAY_TIME,
+            animate: function() {
+                const self = this;
+
+                function lightUpNext() {
+                    let nextIndex;
+
+                    if (self.currentActive === null) {
+                        // Start at random position
+                        nextIndex = Math.floor(Math.random() * self.somas.length);
+                    } else {
+                        // Get neighbors from connection matrix, excluding where we just came from
+                        const allNeighbors = neuralNetwork.getNeighbors(self.currentActive);
+                        const validNeighbors = allNeighbors.filter(n => n !== self.previousActive);
+
+                        if (validNeighbors.length > 0) {
+                            // Pick from neighbors we haven't just visited
+                            nextIndex = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
+                        } else if (allNeighbors.length > 0) {
+                            // Dead end - only option is to go back
+                            nextIndex = allNeighbors[Math.floor(Math.random() * allNeighbors.length)];
+                        } else {
+                            // No connections (shouldn't happen) - stay put
+                            nextIndex = self.currentActive;
+                        }
+
+                        // Fade out current (slow decay)
+                        if (self.somas[self.currentActive]) {
+                            self.somas[self.currentActive].style.transition = `opacity ${self.decayTime}s ease-out`;
+                            self.somas[self.currentActive].style.opacity = '0';
+                        }
+                    }
+
+                    // Light up next (fast rise) and track history
+                    if (self.somas[nextIndex]) {
+                        self.somas[nextIndex].style.transition = `opacity ${self.riseTime}s ease-in`;
+                        self.somas[nextIndex].style.opacity = '1';
+                        self.previousActive = self.currentActive;
+                        self.currentActive = nextIndex;
+                    }
+
+                    // Schedule next transition (propagation speed)
+                    setTimeout(lightUpNext, 300 + Math.random() * 200);
+                }
+
+                lightUpNext();
+            }
+        };
+    }
+};
+
+// Initialize brain animations when DOM is ready
+function initBrainAnimations() {
+    document.querySelectorAll('.brain-logo svg, .loading-brain').forEach(svg => {
+        const network = neuralNetwork.init(svg);
+        if (network) {
+            network.animate();
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     fetchPublications();
+    initBrainAnimations();
+
     const drawer = document.getElementById('contentDrawer');
     const drawerClose = document.getElementById('drawerClose');
     const navItems = document.querySelectorAll('.nav-item');
     const sections = document.querySelectorAll('.drawer-section');
+    const brainLogo = document.getElementById('brainLogo');
 
     let currentSection = null;
 
@@ -40,6 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
         drawer.classList.add('open');
         currentSection = sectionId;
 
+        // Hide brain logo
+        if (brainLogo) brainLogo.classList.add('hidden');
+
         // Scroll drawer to top
         drawer.scrollTop = 0;
     }
@@ -49,7 +248,10 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function closeDrawer() {
         drawer.classList.remove('open');
-        
+
+        // Show brain logo
+        if (brainLogo) brainLogo.classList.remove('hidden');
+
         // Remove active state from nav items after transition
         setTimeout(() => {
             if (!drawer.classList.contains('open')) {
