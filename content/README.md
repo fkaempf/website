@@ -36,20 +36,26 @@ to study *Drosophila* **neural circuits**.
 
 ### `research.md` — Research section
 
-The first paragraph (before the first `---`) is the intro text. Each subsequent block has a title line followed by the description.
+The first paragraph (before the first `---`) is the intro text. Each subsequent block has three parts:
+
+1. **Tag** (e.g. "Current", "Previous") — first line, shown as a small label
+2. **Title** — line starting with `# `
+3. **Description** — remaining text
 
 ```
 I study how sensory inputs drive behaviour.
 
 ---
 
-Current: My Research Topic
+Current
+# My Research Project Title
 Description of this research goes here. You can use
 **bold**, *italic*, and [links](https://example.com).
 
 ---
 
-Previous: Another Project
+Previous
+# Another Project
 Description of another project.
 ```
 

@@ -38,14 +38,23 @@ function parseResearch(text) {
     html += '<p class="research-intro">' + formatInline(blocks[0].trim()) + '</p>';
   }
 
-  // Remaining blocks are research items
+  // Remaining blocks: tag, # title, body
   for (var i = 1; i < blocks.length; i++) {
     var lines = blocks[i].trim().split('\n');
-    var title = lines[0].trim();
-    var body = lines.slice(1).join(' ').trim();
+    var tag = lines[0].trim();
+    var title = '';
+    var body = [];
+    for (var j = 1; j < lines.length; j++) {
+      if (lines[j].trim().indexOf('# ') === 0) {
+        title = lines[j].trim().substring(2);
+      } else if (lines[j].trim()) {
+        body.push(lines[j].trim());
+      }
+    }
     html += '<div class="research-block">' +
+      '<span class="research-tag">' + tag + '</span>' +
       '<h3>' + formatInline(title) + '</h3>' +
-      '<p>' + formatInline(body) + '</p>' +
+      '<p>' + formatInline(body.join(' ')) + '</p>' +
       '</div>';
   }
 
