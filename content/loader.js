@@ -2,6 +2,7 @@
  * Content loader for floriankaempf.com
  * Loads content from markdown files + publications from Semantic Scholar API.
  * Edit the .md files to update content without touching HTML.
+ * Fallback content embedded for file:// protocol compatibility.
  */
 
 var SEMANTIC_SCHOLAR_ID = '2350578684';
@@ -9,6 +10,15 @@ var SEMANTIC_SCHOLAR_ID = '2350578684';
 // Papers with co-first authorship (DOI -> list of co-first author last names)
 var CO_FIRST_AUTHORS = {
   '10.1101/2025.03.14.643363': ['Boulanger-Weill', 'Kämpf']
+};
+
+// Fallback content for when fetch() fails (e.g. file:// protocol)
+var FALLBACK_CONTENT = {
+  'research.md': 'I study how sensory inputs are transformed into persistent internal states that drive context-appropriate behaviour.\n\n---\n\nCurrent\n# Internal States in Drosophila\nMy PhD investigates how contact chemosensation induces internal states in male *Drosophila melanogaster*. When a male fly touches another fly, pheromone cues trigger either courtship (female) or aggression (male), yet both behaviours share underlying neural circuitry through P1 neurons. I\'m dissecting how the brain distinguishes these contexts and selects appropriate behavioural outputs. I combine connectomics (using the [male CNS connectome](https://male-cns.janelia.org/)), behavioural assays with optogenetic manipulation, and two-photon calcium imaging to map the circuit from sensory input to motor output.\n\n---\n\nPrevious\n# Neural basis of evidence integration in larval zebrafish\nDuring my MSc, I studied the motion evidence integrator circuit in larval zebrafish: a neural system that accumulates noisy visual information to drive swim decisions. Using functionally-guided photoactivation combined with mRNA in situ hybridization, I mapped the morphology and neurotransmitter identity of circuit components, establishing a structure-to-function relationship validated against electron microscopy reconstructions. This work culminated in a [co-first author paper](https://doi.org/10.1101/2025.03.14.643363) combining CLEM with functional imaging to reveal the circuit architecture underlying evidence accumulation.\n\n---\n\nApproach\nMy scientific path started with a childhood fascination for fish and programming, two interests that seemed unrelated until I found myself studying how neural circuits compute behaviour. From cichlid social dynamics at Lake Tanganyika to motion integration in zebrafish to internal states in flies, I\'ve been drawn to understanding how brains implement computations that transform sensory inputs into adaptive actions. I combine connectomics with functional imaging and behavioural experiments, always looking for the link between circuit structure and the computations it performs.',
+
+  'talks.md': 'Talk\nContact Chemosensation and Neural Control of Internal States in Drosophila melanogaster\nCambrain\nOctober 2025, Cambridge, UK\n\n---\n\nPoster\nDissection of a neuronal integrator circuit through functionally guided photoactivations and neurotransmitter identifications\nFENS Forum 2024\nJune 2024, Vienna, Austria\n\n---\n\nPoster\nDissection of a neuronal integrator circuit through functionally guided photoactivations and neurotransmitter identifications\nZebrafish Neurobiology Meeting, Cold Spring Harbor Laboratory\nNovember 2023, NY, USA\n\n---\n\nPoster\nDissection of a neuronal integrator circuit through correlated light and electron microscopy in the larval zebrafish\nSociety for Neuroscience Meeting\nNovember 2023, Chicago, USA\n\n---\n\nTalk\nConnecting cell functionality to cell morphology through light microscopy\nNeuroTuscany: Circuits and Behaviour\nJune 2023, Montecastelli, Italy',
+
+  'cv.md': '## Fellowships & Funding\n\n2025--2028\n[Boehringer Ingelheim Fonds PhD Fellowship](https://bifonds.de/fellowships-grants/phd-fellowships.html)\nCompetitive fellowship for outstanding junior scientists in basic biomedical research (<10% acceptance)\n\n2024--2028\n[MRC Studentship](http://mrclmb.ac.uk/careers-and-people/phd-students/funding/)\nFully-funded PhD studentship at the MRC Laboratory of Molecular Biology\n\n## Research Experience\n\n2024--present\nPhD Researcher, [Jefferis Lab](https://flybrain.mrc-lmb.cam.ac.uk/jefferislabwebsite/)\nMRC-LMB, Cambridge\nConnectome analysis, 2-photon microscopy, VR behaviour setups\n\n2021--2024\nResearch Assistant, [Bahl Lab](https://www.neurobiology-konstanz.com/bahl)\nUniversity of Konstanz\nFunctional imaging, CLEM, zebrafish neural circuits\n\n2021\nField Assistant, Jordan Lab\nLake Tanganyika, Zambia\nScientific diving, cichlid behaviour research\n\n2018--2019\nResearch Assistant, Jordan Lab\nUniversity of Konstanz\nSocial behaviour in cichlids, experimental design\n\n## Education\n\n2024--present\nPhD, Biological Sciences\nMRC Laboratory of Molecular Biology, University of Cambridge\n[Jefferis Lab](https://flybrain.mrc-lmb.cam.ac.uk/jefferislabwebsite/). Contact chemosensation and neural control of internal states in *Drosophila*\n\n2021--2024\nMSc, Biological Sciences\nUniversity of Konstanz, Germany\n[Bahl Lab](https://www.neurobiology-konstanz.com/bahl). Mapping functional dynamics and neuronal structure in a hindbrain neural integrator circuit\n\n2017--2021\nBSc, Biological Sciences\nUniversity of Konstanz, Germany\nJordan Lab. Evaluating the effect of simulated predation on contest behaviour in cichlids'
 };
 
 /**
@@ -164,17 +174,22 @@ function loadContent(basePath) {
     var container = document.getElementById(section.id);
     if (!container) return;
 
+    function renderContent(text) {
+      var content = section.parser(text);
+      container.innerHTML = '<h2>' + section.heading + '</h2>' + content;
+    }
+
     fetch(basePath + section.file)
       .then(function(res) {
         if (!res.ok) throw new Error('Failed to load ' + section.file);
         return res.text();
       })
-      .then(function(text) {
-        var content = section.parser(text);
-        container.innerHTML = '<h2>' + section.heading + '</h2>' + content;
-      })
+      .then(renderContent)
       .catch(function(err) {
-        console.warn('Content load error:', err);
+        console.warn('Content load error (' + section.file + '), using fallback:', err.message);
+        if (FALLBACK_CONTENT[section.file]) {
+          renderContent(FALLBACK_CONTENT[section.file]);
+        }
       });
   });
 
