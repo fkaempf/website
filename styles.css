@@ -230,8 +230,52 @@ body::before {
     font-size: 2.25rem;
     font-weight: 400;
     letter-spacing: 0.01em;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     color: var(--text-primary);
+    min-height: 2.25rem;
+}
+
+/* BlurText name animation */
+.name .blur-letter {
+    display: inline-block;
+    filter: blur(8px);
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: filter 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
+}
+
+.name .blur-letter.revealed {
+    filter: blur(0px);
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* DecryptedText tagline */
+.tagline {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    min-height: 1.2em;
+}
+
+.tagline .encrypted-char {
+    color: var(--border-light);
+}
+
+.tagline .revealed-char {
+    color: var(--text-muted);
+}
+
+/* ClickSpark canvas */
+#spark-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
 }
 
 /* ========================================

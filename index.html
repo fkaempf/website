@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v12 - SEO: meta keywords, enhanced structured data, accessibility, performance hints -->
+<!-- v13 - Markdown content system, Semantic Scholar publications, text animations -->
 <html lang="en">
 
 <head>
@@ -108,6 +108,7 @@
 </head>
 
 <body>
+    <canvas id="spark-canvas" aria-hidden="true"></canvas>
     <div class="brain-logo" id="brainLogo" aria-hidden="true">
         <svg viewBox="0 0 936 888" xmlns="http://www.w3.org/2000/svg">
             <g transform="matrix(2.08333,0,0,2.08333,-393.452,-393.085)">
@@ -608,7 +609,8 @@
                     </svg>
                 </div>
             </div>
-            <h1 class="name">Florian Kämpf</h1>
+            <h1 class="name" id="blur-name" aria-label="Florian Kämpf"></h1>
+            <p class="tagline" id="decrypted-tagline" aria-label="Neural Circuits · Behaviour · Drosophila"></p>
             <div class="social-links">
                 <a href="https://scholar.google.com/citations?user=ue53aMkAAAAJ&hl=en" class="social-link"
                     aria-label="Google Scholar" target="_blank" rel="noopener">
@@ -952,6 +954,176 @@
 
     <script src="content/loader.js"></script>
     <script src="script.js"></script>
+
+    <!-- Text animation effects -->
+    <script>
+    // === BlurText Effect ===
+    (function initBlurText() {
+        var nameEl = document.getElementById('blur-name');
+        if (!nameEl) return;
+        var lines = ['Florian', 'K\u00e4mpf'];
+        var DELAY_PER_LETTER = 50;
+        var BASE_DELAY = 300;
+
+        var letterIndex = 0;
+        lines.forEach(function(line, lineIdx) {
+            for (var i = 0; i < line.length; i++) {
+                var span = document.createElement('span');
+                span.classList.add('blur-letter');
+                span.textContent = line[i] === ' ' ? '\u00A0' : line[i];
+                span.dataset.index = letterIndex;
+                nameEl.appendChild(span);
+                letterIndex++;
+            }
+            if (lineIdx < lines.length - 1) {
+                nameEl.appendChild(document.createTextNode(' '));
+            }
+        });
+
+        var letters = nameEl.querySelectorAll('.blur-letter');
+
+        setTimeout(function() {
+            letters.forEach(function(span, i) {
+                setTimeout(function() {
+                    span.classList.add('revealed');
+                }, i * DELAY_PER_LETTER);
+            });
+        }, BASE_DELAY);
+    })();
+
+    // === DecryptedText Effect ===
+    (function initDecryptedText() {
+        var taglineEl = document.getElementById('decrypted-tagline');
+        if (!taglineEl) return;
+        var finalText = 'Neural Circuits \u00B7 Behaviour \u00B7 Drosophila';
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        var speed = 40;
+        var BASE_DELAY = 900;
+
+        var revealedSet = {};
+        var nextRevealIdx = 0;
+
+        function randomChar() {
+            return chars[Math.floor(Math.random() * chars.length)];
+        }
+
+        function renderText() {
+            taglineEl.innerHTML = '';
+            for (var i = 0; i < finalText.length; i++) {
+                var ch = finalText[i];
+                var span = document.createElement('span');
+                if (ch === ' ' || ch === '\u00B7') {
+                    span.textContent = ch;
+                } else if (revealedSet[i]) {
+                    span.textContent = ch;
+                    span.className = 'revealed-char';
+                } else {
+                    span.textContent = randomChar();
+                    span.className = 'encrypted-char';
+                }
+                taglineEl.appendChild(span);
+            }
+        }
+
+        function startAnimation() {
+            renderText();
+            var interval = setInterval(function() {
+                while (nextRevealIdx < finalText.length &&
+                       (finalText[nextRevealIdx] === ' ' || finalText[nextRevealIdx] === '\u00B7')) {
+                    revealedSet[nextRevealIdx] = true;
+                    nextRevealIdx++;
+                }
+                if (nextRevealIdx < finalText.length) {
+                    revealedSet[nextRevealIdx] = true;
+                    nextRevealIdx++;
+                }
+                renderText();
+                if (nextRevealIdx >= finalText.length) {
+                    clearInterval(interval);
+                    taglineEl.textContent = finalText;
+                }
+            }, speed);
+        }
+
+        setTimeout(startAnimation, BASE_DELAY);
+    })();
+
+    // === ClickSpark Effect ===
+    (function initClickSpark() {
+        var canvas = document.getElementById('spark-canvas');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+
+        var SPARK_COUNT = 8;
+        var SPARK_SIZE = 14;
+        var SPARK_RADIUS = 45;
+        var DURATION = 400;
+        var LINE_WIDTH = 2;
+
+        var sparks = [];
+        var isAnimating = false;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function easeOut(t) {
+            return t * (2 - t);
+        }
+
+        function draw(timestamp) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (var i = sparks.length - 1; i >= 0; i--) {
+                var spark = sparks[i];
+                var elapsed = timestamp - spark.startTime;
+                if (elapsed >= DURATION) { sparks.splice(i, 1); continue; }
+                var progress = elapsed / DURATION;
+                var eased = easeOut(progress);
+                var distance = eased * SPARK_RADIUS;
+                var lineLength = SPARK_SIZE * (1 - eased);
+                var opacity = 1 - eased;
+                var x1 = spark.x + distance * Math.cos(spark.angle);
+                var y1 = spark.y + distance * Math.sin(spark.angle);
+                var x2 = spark.x + (distance + lineLength) * Math.cos(spark.angle);
+                var y2 = spark.y + (distance + lineLength) * Math.sin(spark.angle);
+                ctx.strokeStyle = spark.colorIndex % 2 === 0 ? '#ffffff' : '#5ba3a3';
+                ctx.lineWidth = LINE_WIDTH;
+                ctx.globalAlpha = opacity;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+            if (sparks.length > 0) {
+                requestAnimationFrame(draw);
+            } else {
+                isAnimating = false;
+            }
+        }
+
+        function handleSpark(clientX, clientY) {
+            var now = performance.now();
+            for (var i = 0; i < SPARK_COUNT; i++) {
+                sparks.push({
+                    x: clientX, y: clientY,
+                    angle: (2 * Math.PI * i) / SPARK_COUNT,
+                    startTime: now, colorIndex: i
+                });
+            }
+            if (!isAnimating) { isAnimating = true; requestAnimationFrame(draw); }
+        }
+
+        document.addEventListener('click', function(e) { handleSpark(e.clientX, e.clientY); });
+        document.addEventListener('touchstart', function(e) {
+            var touch = e.touches[0];
+            handleSpark(touch.clientX, touch.clientY);
+        });
+    })();
+    </script>
 </body>
 
 </html>
