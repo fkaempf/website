@@ -7,9 +7,3 @@
 # Design source files
 *.afdesign
 *.afd
-
-# Reference/source images
-mockup-reference.png
-network.png
-portrait.png
-brain.png

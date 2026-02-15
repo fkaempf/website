@@ -63,7 +63,7 @@ a:hover {
 body {
     font-family: var(--font-sans);
     background-color: var(--bg-primary);
-    background-image: url('bg.jpg');
+    background-image: url('../assets/bg.jpg');
     background-size: cover;
     background-position: right center;
     background-repeat: no-repeat;
@@ -100,8 +100,10 @@ body::before {
     width: 200px;
     height: 200px;
     z-index: 10;
-    opacity: 0.6;
+    opacity: 0;
     transition: opacity var(--transition-smooth);
+    animation: entranceFadeBrain 0.8s ease forwards;
+    animation-delay: 1.8s;
 }
 
 .brain-logo:hover {
@@ -116,6 +118,12 @@ body::before {
 .brain-logo.hidden {
     opacity: 0;
     pointer-events: none;
+    animation: none;
+}
+
+@keyframes entranceFadeBrain {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 0.6; transform: translateY(0); }
 }
 
 /* Hide brain logo on mobile */
