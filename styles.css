@@ -270,6 +270,33 @@ body::before {
     color: var(--text-muted);
 }
 
+/* Keyword chips */
+.keyword-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 32px;
+    max-width: 320px;
+}
+
+.chip {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 4px 14px;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.chip:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
 /* ClickSpark canvas */
 #spark-canvas {
     position: fixed;
