@@ -173,6 +173,10 @@ body::before {
     -webkit-clip-path: circle(50%);
     transform: translateZ(0);
     flex-shrink: 0;
+    /* Staggered entrance animation */
+    opacity: 0;
+    animation: entranceFade 0.8s ease forwards;
+    animation-delay: 0.1s;
 }
 
 .profile-image {
@@ -286,6 +290,9 @@ body::before {
     display: flex;
     gap: 20px;
     margin-bottom: 56px;
+    opacity: 0;
+    animation: entranceFade 0.6s ease forwards;
+    animation-delay: 1.2s;
 }
 
 .social-link svg {
@@ -325,6 +332,9 @@ body::before {
     gap: 6px;
     width: 100%;
     max-width: 220px;
+    opacity: 0;
+    animation: entranceFade 0.6s ease forwards;
+    animation-delay: 1.5s;
 }
 
 .nav-item {
@@ -449,6 +459,11 @@ body::before {
 @keyframes hintBounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-3px); }
+}
+
+@keyframes entranceFade {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .drawer-section h2 {

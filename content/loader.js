@@ -51,11 +51,19 @@ function parseResearch(text) {
         body.push(lines[j].trim());
       }
     }
-    html += '<div class="research-block">' +
-      '<span class="research-tag">' + tag + '</span>' +
-      '<h3>' + formatInline(title) + '</h3>' +
-      '<p>' + formatInline(body.join(' ')) + '</p>' +
-      '</div>';
+    // If no # title line, tag is the heading (no separate tag badge)
+    if (title) {
+      html += '<div class="research-block">' +
+        '<span class="research-tag">' + tag + '</span>' +
+        '<h3>' + formatInline(title) + '</h3>' +
+        '<p>' + formatInline(body.join(' ')) + '</p>' +
+        '</div>';
+    } else {
+      html += '<div class="research-block">' +
+        '<h3>' + formatInline(tag) + '</h3>' +
+        '<p>' + formatInline(body.join(' ')) + '</p>' +
+        '</div>';
+    }
   }
 
   return html;
